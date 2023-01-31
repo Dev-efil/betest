@@ -14,7 +14,7 @@ const server = app.listen(PORT, () => console.log(`Server started on port: ${POR
 // Socket.io code
 const io = socket(server, {
     cors: {
-        origin: 'https://thanushkanth.ogilvydigital.net/'
+        origin: '*'
     },
 });
 
