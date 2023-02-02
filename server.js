@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const connection = require('./config/dbConfig');
+connection();
 const socket = require('socket.io');
 
 app.use(express.json());
@@ -18,11 +20,15 @@ const io = socket(server, {
     },
 });
 
-let currectUser = 0;
-io.on('connection', function (socket) {
-    currectUser++;
-    io.emit('usercount', { status: currectUser });
+const getAllClient = async () => {
+    const ids = await io.allSockets();
+    const AllClientIds =  Array.from(ids);
+    io.emit('usercount', { allClient: AllClientIds });
+}
 
+
+io.on('connection', function (socket) {
+    getAllClient();
     console.log(`Made a Socket connection 🔌 : ${socket.id}`);
 
     // Register an event to console the data which coming from Client.
@@ -37,12 +43,22 @@ io.on('connection', function (socket) {
         // }
     });
 
+    socket.on('userlogin', (getData)=> {
+
+        // getData  = fb name, fb email
+
+        // if fb email === db email || fb email
+        //     emit this user points from db
+    })
+
     socket.on('disconnect', function () {
-        currectUser--;
-        io.emit('usercount', { status: currectUser });
-        console.log(`Socket disconnection 🔌 : ${socket.id}`);
+        getAllClient()
+        console.log(`Socket disconnected 🔌 : ${socket.id}`);
     });
 });
+
+
+
 const arr = ['1', '2', '3', '4', '5', '6', '12'];
 let timer = 10;
 setInterval(() => {
