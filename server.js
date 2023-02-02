@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const connection = require('./config/dbConfig');
-connection();
 const socket = require('socket.io');
 
 app.use(express.json());
